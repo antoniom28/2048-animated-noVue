@@ -5,42 +5,81 @@ let matrix = [
     [0 , 0 , 0 , 0]
 ];
 
-let prevMatrix;
+let gameStarted = false;
+let prevMatrix = null;
 let newNumber = {row:-1,col:-1};
-let noClick = false;
+let noEventKey = false;
 let added = false;
 let score = 0;
+let topScore = 0;
 let numberToAdd = {row:-1,col:-1};
+let boxInHtml = null;
 
-addNumber();
-addNumber();
+function resetGame(){
+    if(!gameStarted)
+        return;
+        
+    gameStarted = false;
+    matrix = [
+        [0 , 0 , 0 , 0],
+        [0 , 0 , 0 , 0],
+        [0 , 0 , 0 , 0],
+        [0 , 0 , 0 , 0]
+    ];
+    
+    prevMatrix = null;
+    newNumber = {row:-1,col:-1};
+    noEventKey = false;
+    added = false;
+    score = 0;
+    numberToAdd = {row:-1,col:-1};
+    resetBoxInHtml();
+    updateScore(0);
+    startGame();
+}
 
-boxInHtml = updateBox();
+function startGame(){
+    if(gameStarted)
+        return;
 
-window.addEventListener('keydown' , ()=>{
-    if(!noClick){
-        added = false;
-        prevMatrix = [...matrix];
-        switch(event.key){
-            case 'w':
-                moveVertical(0 , 1);
-                break;
-    
-            case 's':
-                moveVertical(3 , -1);
-                break;
-    
-            case 'a':
-                moveHorizontal(0 , 1);
-                break;
-    
-            case 'd':
-                moveHorizontal(3 , -1);
-                break;
+    gameStarted = true;
+    addNumber();
+    addNumber();
+    boxInHtml = updateBox();
+
+    window.addEventListener('keydown' , ()=>{
+        if(!noEventKey){
+            added = false;
+            prevMatrix = [...matrix];
+            switch(event.key){
+                case 'w':
+                    moveVertical(0 , 1);
+                    break;
+        
+                case 's':
+                    moveVertical(3 , -1);
+                    break;
+        
+                case 'a':
+                    moveHorizontal(0 , 1);
+                    break;
+        
+                case 'd':
+                    moveHorizontal(3 , -1);
+                    break;
+            }
+            numberToAdd = {row:-1,col:-1};
         }
-        numberToAdd = {row:-1,col:-1};
+    });
+}
+
+function resetBoxInHtml(){
+    let box = document.querySelectorAll('.number-box');
+    for(let i=0; i<box.length; i++){
+        box[i].innerHTML = "";
+        box[i].className = "number-0 number-box";
     }
-});
+}
 
 function updateBox(){
     let box = document.querySelectorAll('.number-box');
@@ -160,7 +199,6 @@ function checkSum(row,col,direction,colOrRow){
     if(colOrRow == 'row')
         for(let k=row + direction; greaterOrLess(k , direction); k = k + direction){
             if(matrix[row][col] == matrix[k][col]){
-                console.log('sommo',matrix[row][col],matrix[k][col]);
                 matrix[row][col] *= 2;
                 updateScore( matrix[row][col]);
                 //matrix[k][col] = 0;
@@ -175,7 +213,6 @@ function checkSum(row,col,direction,colOrRow){
     if(colOrRow == 'col')
         for(let k=col + direction; greaterOrLess(k , direction); k = k + direction){
             if(matrix[row][col] == matrix[row][k]){
-                console.log('sommo',matrix[row][col],matrix[row][k]);
                 matrix[row][col] *= 2;
                 updateScore( matrix[row][col]);
                 //matrix[row][k] = 0;
@@ -218,8 +255,7 @@ function removeCol(elem){
 }
 
 function updateMatrix(numberToShift){
-    noClick = true;
-   console.log('num da spostare',numberToShift);
+    noEventKey = true;
     matrix = [
         [0 , 0 , 0 , 0],
         [0 , 0 , 0 , 0],
@@ -229,8 +265,6 @@ function updateMatrix(numberToShift){
     for(let i=0; i<numberToShift.length; i++){
         matrix[numberToShift[i].row][numberToShift[i].col] = numberToShift[i].value;
     }
-
-    console.log(matrix);
 
     if(!areEqualMtrx(matrix,prevMatrix) || added == true)
         addNumber();
@@ -246,7 +280,7 @@ function updateMatrix(numberToShift){
     
     boxInHtml = 0;
     boxInHtml = updateBox();
-    noClick = false;
+    noEventKey = false;
     }, 250);
 }
 
@@ -291,9 +325,16 @@ function addNumber(){
 function updateScore(add){
     score += add;
     let scoreBox = document.getElementById('main-score-number');
+    let topScoreBox = document.getElementById('top-score-number');
+
     scoreBox.className += " score-updated";
     setTimeout(() => {
         scoreBox.classList.remove('score-updated');
     }, 200);
+
     scoreBox.innerHTML = score;
+    if(score > topScore){
+        topScore = score;
+        topScoreBox.innerHTML = topScore;
+    }
 }
