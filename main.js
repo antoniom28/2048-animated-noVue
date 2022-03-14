@@ -10,9 +10,11 @@ let newNumber = {row:-1,col:-1};
 let noClick = false;
 let added = false;
 let score = 0;
+let numberToAdd = {row:-1,col:-1};
 
 addNumber();
 addNumber();
+
 boxInHtml = updateBox();
 
 window.addEventListener('keydown' , ()=>{
@@ -36,6 +38,7 @@ window.addEventListener('keydown' , ()=>{
                 moveHorizontal(3 , -1);
                 break;
         }
+        numberToAdd = {row:-1,col:-1};
     }
 });
 
@@ -75,18 +78,34 @@ function convertToMatrix(array, elementsPerSubArray) {
 }
 
 function addShift(numberToShift,row,col,shift,direction,where){
-    if(where == "horizontal")
-        numberToShift.push({row:row , col:shift , value: matrix[row][col]});
-    else
-        numberToShift.push({row:shift , col:col , value: matrix[row][col]});
-
+    if(numberToAdd != undefined && numberToAdd.row == row && numberToAdd.col == col)
+        null;
+    else if(where == "horizontal")
+            numberToShift.push({row:row , col:shift , value: matrix[row][col]});
+         else
+            numberToShift.push({row:shift , col:col , value: matrix[row][col]});
+        
     removeCol(boxInHtml[row][col]);
     removeRow(boxInHtml[row][col]);
 
-    if(where == "horizontal")
-        boxInHtml[row][col].className += ` andra alla col-${shift} e row-${row}`;
-    else
-        boxInHtml[row][col].className += ` andra alla row-${shift} e col-${col}`;
+    if(where == "horizontal"){
+        if(numberToAdd != undefined && numberToAdd.row == row && numberToAdd.col == col){
+            shift = shift - direction;
+            boxInHtml[row][col].className += ` andra alla col-${shift} e row-${row}`;
+            numberToAdd = {row:-1,col:-1};
+            
+        } else{
+            boxInHtml[row][col].className += ` andra alla col-${shift} e row-${row}`;
+        }
+    } else{
+        if(numberToAdd != undefined && numberToAdd.row == row && numberToAdd.col == col){
+            shift = shift - direction;
+            boxInHtml[row][col].className += ` andra alla row-${shift} e col-${col}`;
+            numberToAdd = {row:-1,col:-1};
+        } else{
+            boxInHtml[row][col].className += ` andra alla row-${shift} e col-${col}`;
+        }
+    }
 
     shift = shift + direction;
     return {array:numberToShift , shift:shift};
@@ -101,7 +120,8 @@ function moveHorizontal(pos , direction){
         for (let col = pos; greaterOrLess(col , direction); col = col + direction){
             if(matrix[row][col] > 0){
 
-                checkSum(row,col,direction,'col');
+                if(numberToAdd == undefined || (numberToAdd.row == -1))
+                    numberToAdd = checkSum(row,col,direction,'col');
                 
                 let temp = addShift(numberToShift,row,col,shift,direction,'horizontal');
                 numberToShift = temp.array;
@@ -122,7 +142,8 @@ function moveVertical(pos , direction){
         for (let row = pos; greaterOrLess(row , direction); row = row + direction){
             if(matrix[row][col] > 0){
 
-                checkSum(row,col,direction,'row');
+                if(numberToAdd == undefined || (numberToAdd.row == -1))
+                    numberToAdd = checkSum(row,col,direction,'row');
 
                 let temp = addShift(numberToShift,row,col,shift,direction,'vertical');
                 numberToShift = temp.array;
@@ -135,14 +156,16 @@ function moveVertical(pos , direction){
 }
 
 function checkSum(row,col,direction,colOrRow){
+    let numberAdded;
     if(colOrRow == 'row')
         for(let k=row + direction; greaterOrLess(k , direction); k = k + direction){
             if(matrix[row][col] == matrix[k][col]){
                 console.log('sommo',matrix[row][col],matrix[k][col]);
                 matrix[row][col] *= 2;
                 updateScore( matrix[row][col]);
-                matrix[k][col] = 0;
+                //matrix[k][col] = 0;
                 added = true;
+                numberAdded = {row:k , col:col};
                 break;
             } else 
                 if(matrix[k][col] != 0)
@@ -155,13 +178,16 @@ function checkSum(row,col,direction,colOrRow){
                 console.log('sommo',matrix[row][col],matrix[row][k]);
                 matrix[row][col] *= 2;
                 updateScore( matrix[row][col]);
-                matrix[row][k] = 0;
+                //matrix[row][k] = 0;
                 added = true;
+                numberAdded = {row:row , col:k};
                 break;
             } else 
                 if(matrix[row][k] != 0)
                     break;
         }
+
+        return numberAdded;
 }
 
 function greaterOrLess(index , direction){
@@ -193,7 +219,7 @@ function removeCol(elem){
 
 function updateMatrix(numberToShift){
     noClick = true;
-   
+   console.log('num da spostare',numberToShift);
     matrix = [
         [0 , 0 , 0 , 0],
         [0 , 0 , 0 , 0],
@@ -203,6 +229,8 @@ function updateMatrix(numberToShift){
     for(let i=0; i<numberToShift.length; i++){
         matrix[numberToShift[i].row][numberToShift[i].col] = numberToShift[i].value;
     }
+
+    console.log(matrix);
 
     if(!areEqualMtrx(matrix,prevMatrix) || added == true)
         addNumber();
@@ -219,7 +247,7 @@ function updateMatrix(numberToShift){
     boxInHtml = 0;
     boxInHtml = updateBox();
     noClick = false;
-    }, 100);
+    }, 250);
 }
 
 function areEqualObj(a1 , a2){
