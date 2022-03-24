@@ -1,8 +1,20 @@
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.container{
+  min-width: 750px;
+  height: 100vh;
+  background-color: rgb(241, 229, 205);
+}
+
 #app {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   .main-menu h1{
     display: inline-block;
     cursor: pointer;
@@ -99,31 +111,36 @@
     background-color: #00ff37;
   }
 
-  .no-null.row-0.col-0{ left:17px; top: 18px;}
-  .no-null.row-0.col-1{ left:142px; top: 18px;}
-  .no-null.row-0.col-2{ left:267px; top: 18px;}
-  .no-null.row-0.col-3{ left:392px; top: 18px;}
+  .no-null.row-0.col-0{ left:15px; top: 15px;}
+  .no-null.row-0.col-1{ left:135px; top: 15px;}
+  .no-null.row-0.col-2{ left:255px; top: 15px;}
+  .no-null.row-0.col-3{ left:375px; top: 15px;}
 
-  .no-null.row-1.col-0{ left:17px; top: 143px;}
-  .no-null.row-1.col-1{ left:142px; top: 143px;}
-  .no-null.row-1.col-2{ left:267px; top: 143px;}
-  .no-null.row-1.col-3{ left:392px; top: 143px;}
+  .no-null.row-1.col-0{ left:15px; top: 135px;}
+  .no-null.row-1.col-1{ left:135px; top: 135px;}
+  .no-null.row-1.col-2{ left:255px; top: 135px;}
+  .no-null.row-1.col-3{ left:375px; top: 135px;}
 
-  .no-null.row-2.col-0{ left:17px; top: 268px;}
-  .no-null.row-2.col-1{ left:142px; top: 268px;}
-  .no-null.row-2.col-2{ left:267px; top: 268px;}
-  .no-null.row-2.col-3{ left:392px; top: 268px;}
+  .no-null.row-2.col-0{ left:15px; top: 255px;}
+  .no-null.row-2.col-1{ left:135px; top: 255px;}
+  .no-null.row-2.col-2{ left:255px; top: 255px;}
+  .no-null.row-2.col-3{ left:375px; top: 255px;}
 
-  .no-null.row-3.col-0{ left:17px; top: 393px;}
-  .no-null.row-3.col-1{ left:142px; top: 393px;}
-  .no-null.row-3.col-2{ left:267px; top: 393px;}
-  .no-null.row-3.col-3{ left:392px; top: 393px;}
+  .no-null.row-3.col-0{ left:15px; top: 375px;}
+  .no-null.row-3.col-1{ left:135px; top: 375px;}
+  .no-null.row-3.col-2{ left:255px; top: 375px;}
+  .no-null.row-3.col-3{ left:375px; top: 375px;}
 
   .score-box{
-    position: fixed;
+    display: flex;
+    justify-content: center;
     top:0;
     text-align: center;
     left: 0;
+}
+
+.score-box > *{
+  margin: 0 20px;
 }
 
 .score-box p{
